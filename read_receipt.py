@@ -1,5 +1,11 @@
 #!/Users/VetleTjora/miniconda3/bin/python3
 
+'''
+Takes a digital receipt (.pdf), reads it, structures it into a pandas
+dataframe, and finally saves it as temporary.csv in the working
+directory.
+'''
+
 import pytesseract
 import sys
 import pandas as pd
