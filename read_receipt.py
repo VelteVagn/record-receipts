@@ -175,8 +175,7 @@ receipt_df = pd.DataFrame(ordered_list, columns=['Product', 'Amount', 'Price'])
 if receipt_df.empty:
    raise ValueError('DataFrame empty: receipt not read.')
 else:
-   receipt_df.to_csv('temporary.csv')
-   
+   receipt_df.to_csv('temporary.csv', index=False)
 
 
 

@@ -2,7 +2,7 @@
 
 import pytesseract
 import psycopg2
-from pdf2image import convert_from_path
+	
 import sys
 import pandas as pd
 import subprocess
