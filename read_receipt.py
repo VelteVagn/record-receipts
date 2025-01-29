@@ -2,7 +2,7 @@
 
 import pytesseract
 import sys
-pandas as pd
+import pandas as pd
 from prompt_toolkit import prompt
 
 # get the name of the pdf
