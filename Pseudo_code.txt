@@ -1,0 +1,132 @@
+PSEUDO CODE
+
+functions:
+------------------------------------------------------------
+add_groceries:
+if grocery name exists:
+ * add purchase
+ * remove row from dataframe
+else
+ * ask user for input ( new entry / modify name / skip / delete / exit )
+ * if user input is n + category:
+  - insert new product in category
+  - add purchase
+  - remove row from dataframe
+ * elif user input is n:
+  - print categories and ask for which one
+  - user input ( category / new category / back / exit )
+  - if user input is existing category:
+   > add purchase
+   > remove row from dataframe
+  - elif user input is new + new category:
+   > add new category and purchase
+  - elif user input is b:
+   > go back (add_groceries from same index?)
+  - elif user input is exit:
+   > exit and save!!
+  - else:
+   > wait for proper response
+ * elif user input is m:
+  - ask for user input ( name )
+  - if user input is not empty or ' '*n:
+   > modify the dataframe
+   > go back (add_groceries from same index?)
+ * elif user input is s:
+  - skip (add_groceries with next index?)
+ * elif user input is d:
+  - ask for confirmation
+  - if y:
+   > delete row from dataframe
+   > go back (add__groceries with same index?)
+  - if n:
+   > go back (add_groceries with same index?)
+ * elif user input is exit:
+  - exit and save!!
+
+alter_dataframe:
+ask for user input ( row:column:value / row / delete / done / exit )
+if user input is r=n c=name v=new_value:
+ * check if n is integer
+ * check if name is a column
+ * check if type of new_value is valid
+ * if all checks pass:
+  - change row values
+  - alter_dataframe()
+ * else:
+  - alter_dataframe()
+elif user input is r=n:
+ * check if n is integer
+ * check that n is not out of range
+ * if both checks pass:
+  - ask for user input ( pn=productname am=amount pr=price )
+  - check that productname is not empty
+  - check that amount is integer
+  - check that price is float
+  - if all checks pass:
+   > alter dataframe
+   > alter_dataframe()
+  - else:
+   > alter_dataframe()
+elif user input is del:
+ * ask for user input ( row / cancel )
+ * if user input is cancel:
+  - alter_dataframe()
+ * else:
+  - check that n is an int
+  - and not out of range
+  - if both checks pass:
+   > ask for confirmation:
+   > if y:
+    + delete row
+    + alter_dataframe()
+   > else:
+    + alter_dataframe()
+elif user input is done:
+ * ask for confirmation
+  - if y:
+   > add_groceries()
+  - if n:
+   > alter_dataframe()
+elif user input is exit:
+ * ask to save dataframe and delete pdf, or save pdf:
+ * if user input is save dataframe:
+  - save dataframe
+  - sys.exit(0 or 1)
+ * else:
+  - sys.exit(1 or 2)
+
+------------------------------------------------------------
+
+script:
+------------------------------------------------------------
+if price and amount is correct:
+ * add_groceries function
+else:
+ * print dataframe
+ * ask for user input ( alter / continue / open receipt / exit )
+ * if user input is a:
+  - alter_dataframe function
+ * elif user input is c:
+  - add_groceries function
+ * elif user input is o:
+  - run ./open_receipt.sh
+ * elif user input is exit:
+  - exit without deleting the pdf
+ * else:
+  - wait for useful input
+
+if dataframe is empty:
+ * sys.exit(0)
+else:
+ * save dataframe
+ * sys.exit(2)
+------------------------------------------------------------
+
+
+
+
+
+
+
+
+
