@@ -4,6 +4,7 @@ import pytesseract
 import sys
 import pandas as pd
 from prompt_toolkit import prompt
+from pdf2image import convert_from_path
 
 # get the name of the pdf
 pdf_name = sys.argv[1]
