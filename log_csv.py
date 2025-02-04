@@ -9,6 +9,111 @@ from prompt_toolkit import promt
 Takes a csv with 3 columns named 'Product', 'Amount' and 'Price' and logs it into a psql table.
 '''
 
+# function to exit the python script whilst saving the dataframe
+def save_and_exit(dataframe, indices):
+   registered_df = df.loc[indices]
+   df.drop(index=indices, inplace=True)
+
+   df.to_csv(f'{csv}_modified', index=False)
+   registered_df.to_csv(f'{csv}_registered', index=False)
+   sys.exit(2)
+
+# IMPROVEMENT: Make one max_length for 1st row and one for 2nd row to make spacing more natural.
+def get_categories(conn, list_cat):
+   '''
+   If list_cat is false, simply returns a list of all categories. If list_cat is true, all the categories 
+   will be printed in 3 separate columns as well. 
+   '''
+   with conn.cursor() as cursor:
+      cursor.execute(list_categories)
+      categories = cursor.fetchall()
+   categories = [c[0] for c in categories]
+   if list_cat:
+      max_length = max([len(c) for c in categories])
+      l = len(categories)
+      remainder = l % 3
+      iterations = int((l - remainder)/3)
+      for i in range(iterations):
+         j = i*3
+         row_list = categories[j:j+3]
+         row_string = ''
+         for k in row_list:
+            space = 3*' ' + (max_length-len(k))*' '
+            row_string += k + space
+         print(row_string)
+      if remainder == 1:
+         print(categories[-1])
+      elif remainder == 2:
+         space = 3*' ' + (max_length-len(categories[-2]))*' '
+         print(categories[-2] + space + categories[-1])
+   return categories   
+
+def unregistered_product(row, conn, indices, df, empty_n=False):
+   with conn.cursor() as cursor:
+      user_input = input().lower()
+      if user_input == 'n' or empty_n:
+         print('Enter one of the existing categories or create a new one:')
+         categories = get_categories(list_cat=True)
+         new_input = input().lower()
+         new_input = new_input[0].upper() + new_input[1:]
+         if not new_input in categories:
+            cursor.execute(insert_category, (new_input,))
+            connection.commit()
+         cursor.execute(find_category_id, (new_input,))
+         category_id = cursor.fetchone()[0]
+         cursor.execute(insert_product, (row['Product'], category_id))
+         connection.commit()
+         cursor.execute(find_product_id, (row['Product'],))
+         product_id = cursor.fetchone()[0]
+         cursor.execute(insert_product_purchase, (date_time, row['Price'], row['Amount'], product_id))
+         connection.commit()
+         return True
+      elif user_input[:2] == 'n ':
+         if len(user_input) == 2:
+            return unregistered_product(row, conn, indices, df, empty_n=True)
+         category = user_input[2].upper() + user_input[3:]
+         categories = get_categories(list_cat=False)
+         # should be made a function (because repetition):
+         if not category in categories:
+            cursor.execute(insert_category, (category,))
+            connection.commit()
+         cursor.execute(find_category_id, (category,))
+         category_id = cursor.fetchone()[0]
+         cursor.execute(insert_product, (row['Product'], category_id))
+         connection.commit()
+         cursor.execute(find_product_id, (row['Product'],))
+         product_id = cursor.fetchone()[0]
+         cursor.execute(insert_product_purchase, (date_time, row['Price'], row['Amount'], product_id))
+         connection.commit()
+         return True
+         # end of "function".
+      elif user_input == 's':
+         return False
+      elif user_input[0] == 'm':
+         if len(user_input) > 2:
+            new_name = user_input[2:].upper()
+         else:
+            print('Please enter modified product name.')
+            new_name = prompt(default=row['Product']).upper()
+         cursor.execute(check_product_existence, (new_name,))
+         if not cursor.fetchone()[0]:
+            row['Product'] = new_name
+            print(f'Choose [n] to add {new_name} to a category.')
+            return unregistered_product(row, conn, indices, df)
+         else:
+            cursor.execute(find_product_id, (new_name,))
+            product_id = cursor.fetchone()[0]
+            cursor.execute(insert_product_purchase, (date_time, row['Price'], row['Amount'], product_id))
+            connection.commit()
+            return True
+      elif user_input == 'd':
+         return True
+      elif user_input in ('e', 'exit', 'exit()'):
+         exit_and_save(df, indices)
+      else:
+         print('Please enter a valid input.')
+         return unregistered_product(row, conn, indices, df)
+
 def main():
    # get csv name
    csv = sys.argv[1]
@@ -27,12 +132,11 @@ def main():
 
    # extract time and date from the name
    time = list(csv[-12:-4])
-   time = [':' if t=='_' else t for t in time]
-   time = ''.join(time)
    date = pdf_name[-23:-13]
+   date_time = f'{date} {time}'
 
-   # import csv
-   csv = pd.read_csv('f./csv/{date}T{time}.csv')
+   # import csv as dataframe
+   df = pd.read_csv(csv)
 
    # PSQL cursor
    cursor = connection.cursor()
@@ -61,6 +165,37 @@ def main():
       (date, price, amount, product_id)
       VALUES (%s, %s, %s, %s);
    '''
+
+   indices = []
+   for index, row in df.iterrows():
+      cursor.execute(check_product_existence, (row['Product'],))
+      if cursor.fetchone()[0]:                                      # if product is previously registered
+         cursor.execute(find_product_id, (row['Product'],))
+         product_id = cursor.fetchone()[0]
+         new_purchase = (date_time, row['Price'], row['Amount'], product_id)
+         cursor.execute(insert_product_purchase, new_purchase)
+         connection.commit()
+         indices.append(index)
+      else:
+         print(f'"{row['Product']}" not found. Please register new entry (n), modify product name (m), skip this product (s), delete this product (d) or exit (e).')
+         if unregistered_product(row, indices, connection, df):
+            indices.append(index)
+   registered_df = df.loc[indices]
+   df.drop(index=indices, inplace=True)
+   
+   if df.empty:
+      sys.exit(0)
+   else:
+      df.to_csv(f'{csv}_modified', index=False)
+      registered_df.to_csv(f'{csv}_registered', index=False)
+      sys.exit(2)
+
+
+
+
+
+
+
 
 
  
