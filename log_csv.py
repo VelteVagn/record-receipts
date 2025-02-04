@@ -14,8 +14,8 @@ def save_and_exit(dataframe, indices):
    registered_df = df.loc[indices]
    df.drop(index=indices, inplace=True)
 
-   df.to_csv(f'{csv[-4]}_modified.csv', index=False)
-   registered_df.to_csv(f'{csv[-4]}_registered.csv', index=False)
+   df.to_csv(f'{csv[:-4]}_modified.csv', index=False)
+   registered_df.to_csv(f'{csv[:-4]}_registered.csv', index=False)
    sys.exit(2)
 
 # IMPROVEMENT: Make one max_length for 1st row and one for 2nd row to make spacing more natural.
@@ -196,7 +196,7 @@ def main():
    if df.empty:
       sys.exit(0)
    else:
-      df.to_csv(f'{csv[-4]}_modified.csv', index=False)
+      df.to_csv(f'{csv[:-4]}_modified.csv', index=False)
       registered_df.to_csv(f'{csv[:-4]}_registered.csv', index=False)
       sys.exit(2)
 
