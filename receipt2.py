@@ -2,7 +2,6 @@
 
 import pytesseract
 import psycopg2
-	
 import sys
 import pandas as pd
 import subprocess
