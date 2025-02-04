@@ -2,14 +2,12 @@
 
 '''
 Takes a digital receipt (.pdf), reads it, structures it into a pandas
-dataframe, and finally saves it as temporary.csv in the working
-directory.
+dataframe, and finally saves it as a csv in the directory called csv.
 '''
 
 import pytesseract
 import sys
 import pandas as pd
-from prompt_toolkit import prompt
 from pdf2image import convert_from_path
 
 # get the name of the pdf
@@ -58,8 +56,10 @@ for line in full_list:
 # remove unwanted information
 indices = []
 for i in range(len(full_list)):
-   if full_list[i] == 'FRYSVAROR BYTES EJ':
+   if full_list[i][:5] == 'Orgnr':
       indices.append(i+1)
+   elif full_list[i] == 'FRYSVAROR BYTES EJ':
+      indices[0] = i+1
    elif full_list[i][:6] == 'Totalt':
       indices.append(i)
    if len(indices) == 2:
@@ -78,6 +78,8 @@ ordered_list = []
 veggie_price = False
 pant = 0.0
 for x in groc_word_list:
+   if x == "FRYSVAROR BYTES EJ":
+      continue
    # correct cases of "xx. xx" to "xx.xx":
    try:
       if x[-2][-1] == '.':
@@ -181,7 +183,7 @@ receipt_df = pd.DataFrame(ordered_list, columns=['Product', 'Amount', 'Price'])
 if receipt_df.empty:
    raise ValueError('DataFrame empty: receipt not read.')
 else:
-   receipt_df.to_csv('temporary.csv', index=False)
+   receipt_df.to_csv(f'./csv/{date}T{time}.csv', index=False)
 
 
 
