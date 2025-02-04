@@ -1,2 +1,4 @@
 *.log # Ignore log files
 commit_guidelines.txt
+csv
+receipt_pdfs
