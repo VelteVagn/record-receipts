@@ -131,8 +131,8 @@ def main():
    )
 
    # extract time and date from the name
-   time = list(csv[-12:-4])
-   date = pdf_name[-23:-13]
+   time = csv[-12:-4]
+   date = csv[-23:-13]
    date_time = f'{date} {time}'
 
    # import csv as dataframe
