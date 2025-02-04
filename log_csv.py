@@ -190,8 +190,8 @@ def main():
       registered_df.to_csv(f'{csv}_registered', index=False)
       sys.exit(2)
 
-
-
+if __name__ == '__main__':
+   main()
 
 
 
