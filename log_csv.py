@@ -3,7 +3,7 @@
 import sys
 import psycopg2
 import pandas as pd
-from prompt_toolkit import promt
+from prompt_toolkit import prompt
 
 '''
 Takes a csv with 3 columns named 'Product', 'Amount' and 'Price' and logs it into a psql table.
