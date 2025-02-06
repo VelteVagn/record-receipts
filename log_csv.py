@@ -151,19 +151,27 @@ def main():
     # get password
     pw = sys.argv[2]
 
+    # POSSIBLE UPGRADE: ask for password a second time on fail
     # connect to the postgreSQL database
-    connection = psycopg2.connect(
-        dbname="receipts_test",
-        user="VetleTjora",
-        password=pw,
-        host="localhost",
-        port="5433",
-    )
+    try:
+        connection = psycopg2.connect(
+            dbname="receipts_test",
+            user="VetleTjora",
+            password=pw,
+            host="localhost",
+            port="5433",
+        )
+    except psycopg2.OperationalError:
+        sys.exit(3)
 
     # extract time and date from the name
     time = csv[-12:-4]
+    time = list(time)
+    time = [":" if t == "_" else t for t in time]
+    time = "".join(time)
     date = csv[-23:-13]
     date_time = f"{date} {time}"
+    print(f"DATE AND TIME: {date} {time}")
 
     # import csv as dataframe
     df = pd.read_csv(csv)
