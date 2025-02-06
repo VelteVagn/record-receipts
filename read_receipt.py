@@ -185,8 +185,11 @@ def main():
 
     # check if the data frame is empty
     if receipt_df.empty:
-        raise ValueError("DataFrame empty: receipt not read.")
+        sys.exit(2)
     else:
+        time = list(time)
+        time = ["_" if t == ":" else t for t in time]
+        time = "".join(time)
         receipt_df.to_csv(f"./csv/{date}T{time}.csv", index=False)
 
 
