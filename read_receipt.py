@@ -9,6 +9,8 @@ import pytesseract
 import sys
 import pandas as pd
 from pdf2image import convert_from_path
+import subprocess
+from prompt_toolkit import prompt
 
 
 def main():
@@ -148,7 +150,7 @@ def main():
                 )  # remove round-off errors
             finally:
                 continue  # avoid creating a new row
-        # ignore pant (which is also capital letters)
+        # register pant (which is also capital letters)
         if x[0] == "+PANT":
             try:
                 pant += float(x[-1])
@@ -186,11 +188,63 @@ def main():
     # check if the data frame is empty
     if receipt_df.empty:
         sys.exit(2)
-    else:
-        time = list(time)
-        time = ["_" if t == ":" else t for t in time]
-        time = "".join(time)
-        receipt_df.to_csv(f"./csv/{date}T{time}.csv", index=False)
+
+    # check that total price and amount has been read from the receipt
+    if read_total is None and read_amount is None:
+        print("Unable to read total price and amount from receipt. Please enter manually. Press enter to open receipt.")
+        input()
+        subprocess.call(['open', pdf_name])
+        while True:
+            user_input = prompt(default='[price] [amount]')
+            if user_input == 'exit':
+                sys.exit(3)
+            try:
+                user_input = user_input.split(' ')
+                read_total, read_amount = user_input
+                read_total = float(read_total)
+                read_amount = int(read_amount)
+                break
+            except:
+                print("Please insert price and amount:")
+    elif read_total is None:
+        print("Unable to read total price from receipt. Please enter manually. Press enter to open receipt.")
+        input()
+        subprocess.call(['open', pdf_name])
+        while True:
+            user_input = prompt(default='[price]')
+            if user_input == 'exit':
+                sys.exit(3)
+            try:
+                read_total = float(user_input)
+                break
+            except:
+                print("Please insert price:")
+    elif read_amount is None:
+        print("Unable to read total amount from receipt. Please enter manually. Press enter to open receipt.")
+        input()
+        subprocess.call(['open', pdf_name])
+        while True:
+            user_input = prompt(default='[amount]')
+            if user_input == 'exit':
+                sys.exit(3)
+            try:
+                read_amount = int(user_input)
+                break
+            except:
+                print("Please insert amount:")
+
+    # calculate sum of amounts and prices
+    price = receipt_df['Price'].sum()
+    amount = receipt_df['Amount'].sum()
+    
+    # check for discrepencies in price and amount
+    if read_amount != amount or abs(read_total - price) > 0.1:
+        sys.exit(4)
+
+    time = list(time)
+    time = ["_" if t == ":" else t for t in time]
+    time = "".join(time)
+    receipt_df.to_csv(f"./csv/{date}T{time}.csv", index=False)
 
 
 if __name__ == "__main__":
