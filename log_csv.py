@@ -1,9 +1,12 @@
 #!/Users/VetleTjora/miniconda3/bin/python3
 
+import os
 import sys
 import psycopg2
 import pandas as pd
 from prompt_toolkit import prompt
+from dotenv import load_dotenv
+
 
 """
 Takes a csv with 3 columns named 'Product', 'Amount' and 'Price' and logs it into a psql table.
@@ -151,15 +154,22 @@ def main():
     # get password
     pw = sys.argv[2]
 
+    # get connection variables from .env
+    load_dotenv()
+    DB_NAME = os.getenv("DB_NAME")
+    DB_USER = os.getenv("DB_USER")
+    DB_HOST = os.getenv("DB_HOST")
+    DB_PORT = os.getenv("DB_PORT")
+
     # POSSIBLE UPGRADE: ask for password a second time on fail
     # connect to the postgreSQL database
     try:
         connection = psycopg2.connect(
-            dbname="receipts_test",
-            user="VetleTjora",
+            dbname=DB_NAME,
+            user=DB_USER,
             password=pw,
-            host="localhost",
-            port="5433",
+            host=DB_HOST,
+            port=DB_PORT,
         )
     except psycopg2.OperationalError:
         sys.exit(3)
