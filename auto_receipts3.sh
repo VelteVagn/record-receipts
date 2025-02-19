@@ -13,12 +13,12 @@ for receipt in ./data/receipt_pdfs/20??-??-??T??_??_??.pdf
 do
  echo
  echo "Reading: $receipt"
- ./read_receipt.py "$receipt"
+ ./src/read_receipt.py "$receipt"
  result=$?
  if [ $result -eq 0 ]; then
   echo "Successfully read: $receipt. Beginning registration."
   csv="./data/csv${receipt:14:20}.csv"
-  ./log_csv.py "$csv" "$PASSWORD"
+  ./src/log_csv.py "$csv" "$PASSWORD"
   log_result=$?
   if [ $log_result -eq 0 ]; then
    echo "Success!"
