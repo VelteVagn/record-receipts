@@ -4,3 +4,5 @@ csv
 receipt_pdfs
 .DS_Store
 .env
+.dated_stuff
+improvements
