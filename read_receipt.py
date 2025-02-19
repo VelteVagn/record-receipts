@@ -1,4 +1,4 @@
-#!/Users/VetleTjora/miniconda3/bin/python3
+#!/usr/bin/env python3
 
 """
 Takes a digital receipt (.pdf), reads it, structures it into a pandas
