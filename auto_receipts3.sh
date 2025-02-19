@@ -17,7 +17,7 @@ do
  result=$?
  if [ $result -eq 0 ]; then
   echo "Successfully read: $receipt. Beginning registration."
-  csv="./data/csv${receipt:14:20}.csv"
+  csv="./data/temp${receipt:19:20}.csv"
   ./src/log_csv.py "$csv" "$PASSWORD"
   log_result=$?
   if [ $log_result -eq 0 ]; then
