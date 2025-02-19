@@ -17,7 +17,7 @@ do
  result=$?
  if [ $result -eq 0 ]; then
   echo "Successfully read: $receipt. Beginning registration."
-  csv="./csv${receipt:14:20}.csv"
+  csv="./data/csv${receipt:14:20}.csv"
   ./log_csv.py "$csv" "$PASSWORD"
   log_result=$?
   if [ $log_result -eq 0 ]; then
@@ -53,4 +53,4 @@ if [ $saved_csvs -gt 0 ]; then
 fi
 
 #clear directory to keep things tidy
-#rm csv/*.csv
+#rm data/csv/*.csv

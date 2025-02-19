@@ -244,7 +244,7 @@ def main():
     time = list(time)
     time = ["_" if t == ":" else t for t in time]
     time = "".join(time)
-    receipt_df.to_csv(f"./csv/{date}T{time}.csv", index=False)
+    receipt_df.to_csv(f"./data/csv/{date}T{time}.csv", index=False)
 
 
 if __name__ == "__main__":
