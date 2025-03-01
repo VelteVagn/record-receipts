@@ -23,7 +23,8 @@ do
   if [ $log_result -eq 0 ]; then
    echo "Success!"
    ((successes++))
-   # DELETE CSV AND PDF!!!
+   rm "$csv"
+   rm "$receipt"
   elif [ $log_result -eq 1 ]; then
    echo "Unexpected error: unable to log CSV"
    ((fails++))
