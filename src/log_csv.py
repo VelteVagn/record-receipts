@@ -231,8 +231,8 @@ def main():
     if df.empty:
         sys.exit(0)
     else:
-        df.to_csv(f"{csv[:-4]}_modified.csv", index=False)
-        registered_df.to_csv(f"{csv[:-4]}_registered.csv", index=False)
+        df.to_csv(f"data/archive/{csv[9:-4]}_mod.csv", index=False)
+        registered_df.to_csv(f"data/archive/{csv[9:-4]}_reg.csv", index=False)
         sys.exit(2)
 
 
