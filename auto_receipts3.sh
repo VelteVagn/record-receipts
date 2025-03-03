@@ -45,6 +45,27 @@ do
  ((iterations++))
 done
 
+for edit in ./data/archive/20??-??-??T??_??_??_edit.csv
+do
+ echo
+ echo registering "$edit"
+ ./src/log_csv.py "$edit" "$PASSWORD"
+ result=$?
+ if [ $result -eq 0 ]; then
+  reg="${edit::34}_reg.csv"
+  mod="${edit::34}_mod.csv"
+  pdf="./data/receipt_pdfs/${edit:15:19}.pdf"
+  rm "$edit"
+  rm "$reg"
+  if [ test -f "$mod" ]; then
+   rm "$mod"
+  fi
+  if [ test -f "$pdf" ]; then
+   rm "$pdf"
+  fi
+ fi 
+done
+
 echo
 echo "Successfully registered: $successes receipt(s)"
 echo "Failed to register:      $fails receipt(s)"
@@ -53,5 +74,5 @@ if [ $saved_csvs -gt 0 ]; then
  echo "Saved $saved_csvs receipts as CSV to be reviewed"
 fi
 
-#clear directory to keep things tidy
-#rm data/csv/*.csv
+#clear temporary directory to keep things tidy
+rm ./data/temp/*
