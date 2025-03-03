@@ -11,6 +11,17 @@ echo
 
 for receipt in ./data/receipt_pdfs/20??-??-??T??_??_??.pdf
 do
+ ./src/repetition_check.py "$receipt" "$PASSWORD"
+ new_receipt=$?
+ if [ $new_receipt -eq 1 ]; then
+  echo "Unexpected error."
+  exit 1
+ elif [ $new_receipt -eq 2 ]; then
+  continue
+ elif [ $new_receipt -eq 3 ]; then
+  echo "Error: Unable to connect to psql server. Possibly wrong password. Try again."
+  exit 1
+ fi
  echo
  echo "Reading: $receipt"
  ./src/read_receipt.py "$receipt"
