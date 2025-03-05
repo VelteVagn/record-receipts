@@ -1,21 +1,85 @@
-# Receipt logger
+# Receipt Logger
+This is a programme with the purpose of reading receipts and logging the results in a psql table. Product purchases will be divided into amount, total price and category. 
 
-## Description
-This is a personal project with the purpose of automating the process of registering grocery receipts on a detailed level. First and foremost out of curiousity, but also to see where the money goes to make smarter shopping decisions in the future.
+## Table of Contents
+- [Installation](#installation)
+- [Usage](#usage)
+- [License](#license)
+- [Notes](#notes)
 
-### Use
-As mentioned, the point is to register grocery receipts. It is specifically tailored to the digital receipts (in pdf-format) from the Swedish grocery store chain Willy:s (owned by Axfood). Thus running the program on receipts from other stores will likely not work without tweaking the code. The program will run through all receipts saved in the repository named receipt_pdfs. First it will convert the pdf to a png, and then extract the text using pytesseract. Then it structures the contents into a table with columns of name, amount and price, for every purchased product on the receipt. The table will then be saved as a csv. 
+## Installation
+If you haven't already, install [PostgreSQL](https://www.postgresql.org/download/) and [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html).
 
-Now every product purchase will be registered in a psql table. For every product that has not been registered previously, the user will be prompted to choose a category that the product fits into. Thus in the beginning, the programme will be slow and prompt the user for input a lot. But as the psql table increases in size, the amount of times a new product must be registered decreases and so the programme will become more and more independent of the user.  
+Clone and navigate to the repository:
+```bash
+$ git clone https://github.com/...........
+$ cd reciept
+```
+
+Create and activate Conda environment:
+```bash
+$ conda env create -f environment.yml
+$ conda activate base
+```
+
+Change name of .env.example to .env:
+```bash
+$ cp .env.example .env
+```
+
+Open PostgreSQL:
+```bash
+$ psql -U postgres -d
+```
+NOTE: if you have edited the contents of .env, make sure the user matches DB_USER, i.e., if DB_USER=username, then write 
+```bash
+$ psql -U username -d
+```
+in the terminal instead. 
+
+Create the database:
+```sql
+$ CREATE DATABASE receipts;
+```
+Again, make sure the database name matches the name in .env.
+Lastly, initialise the tables:
+
+```bash
+$ psql -U postgres -d receipts -f env/init.sql
+```
+
+## Usage
+Put the receipts that are to be scanned and logged into the directory data/receipt_pdfs. For testing purposes, copy the sample receipts to data/receipt_pdfs:
+```bash
+$ cp data/sample_receipts/* data/receipt_pdfs/
+```
+
+Make auto_receipts3.sh executable:
+```bash
+$ chmod +x auto_receipts3.sh
+```
+
+Execute auto_receipts.sh to begin registering the receipts in data/receipt_pdfs and follow the instructions:
+```bash
+$ ./auto_receipts3.sh
+```
+
+If parts of the receipt was saved, CSVs will be saved in data/archive. Manually edit the file ending in _mod.csv, and rename it by changing _mod.csv to _edit.csv. Next time auto_receipts3.sh is run, the edits will be registered, and the corresponding CSVs and PDF will be deleted.  
+
+## License
+This project is licensed under the [GNU General Public License](COPYING).
+
+## Notes
+Here are some final notes regarding choices made, background, etc.
+
+### Willy:s
+Willy:s is a Swedish grocery store, owned by Axfood. Meanwhile the project is written specifically for digital receipts from Willy:s, it shouldn't pose too much of a challenge to tailor it for other stores instead. 
+
+### Pytesseract
+The use of pytesseract to read the receipt might look weird, but for whatever reason, the Willy:s receipts are formatted weirdly, so I could not find a better way to read the receipts. On the bright side, the use of OCR should make it possible to use the script on physical receipts as well as digital ones. 
 
 ### Purpose
-The purpose of the project is first and foremost out of curiousity and to teach myself more programming. Additionally, I wanted to try to utilise Bash and psql and become proficient in navigating the terminal and using git. When I have previously described this project to people, I've usually gotten an empty stare that I do believe means "Why?". And so I've concluded that people in general aren't that interested in this kind of detailed check of grocery expenses, but maybe I'll ask Willy:s if they're interested further down the line. Because why not? For people who love data, maybe they're interested in collecting data of themselves, and then train an AI to do their daily grocery shopping. 
+The purpose of the project was mostly out of curiosity. I do not know if this could have any bigger purpose than that, but personally I have long wanted to know more specifically where the money goes when going to the grocery store. Maybe it could be possible to collect data to train an AI, but personally I wouldn't trust an AI to do my grocery shopping.
 
-### Challenges
-During the project, various issues have surfaced. The biggest issues have been directly connected to the digital receipts on the Willy:s homepage. Firstly, the receipts are saved as pdfs, but the text refuses to be extracted. Copy/pasting the text, or alternatively extracting it with python, yields seemingly gibberish results. So I opted with first converting them to pngs, and then using pytesseract to extract the text with image recognision. This in turn, led to the problem of the receipt text being flawed at times, e.g., inserting spaces where no spaces are present, completely ignoring some lines, etc. I managed to avoid some of the problems by setting the parameter config="--psm 6" in pytesseract.image_to_string, thereby forcing the text to be extracted line by line. This didn't remove all issues, so I've tried to root out some common mistakes by coding in some exceptions.
-
-Secondly, the receipts from Willy:s get somewhat "corrupted" over time. That is receipts that are older than ~2 weeks change name and converts all Swedish letters (Ää, Öö, Åå) into question marks. This adds a lot more work, especially since I've used the time stamp in the original file names to extract time and date. 
-
-This is also my very first project that I intend to publish on GitHub. So I'm doing my very best to create structured code readable by anyone, not just me, but more importantly, structuring the directories properly, creating my first README.md, making sure all necessary files are present meanwhile unnecessary files are removed, and so on. So if this project contains stupid stuff, or lacks very smart stuff, any guidance is welcome.
-
-  
+### Bash
+Part of the motivation behind doing this project was to get more proficient in bash, so that I can install Linux for personal use. Of course, that means that this programme cannot easily be ported to Windows. However, most is python anyway, so it probably wouldn't be too big of a hassle if someone felt the need to change that.
