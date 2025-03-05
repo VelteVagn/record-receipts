@@ -151,15 +151,13 @@ def main():
     # get csv name
     csv = sys.argv[1]
 
-    # get password
-    pw = sys.argv[2]
-
     # get connection variables from .env
     load_dotenv()
     DB_NAME = os.getenv("DB_NAME")
     DB_USER = os.getenv("DB_USER")
     DB_HOST = os.getenv("DB_HOST")
     DB_PORT = os.getenv("DB_PORT")
+    DB_PASSWORD = os.getenv("DB_PASSWORD")
 
     # POSSIBLE UPGRADE: ask for password a second time on fail
     # connect to the postgreSQL database
@@ -167,7 +165,7 @@ def main():
         connection = psycopg2.connect(
             dbname=DB_NAME,
             user=DB_USER,
-            password=pw,
+            password=DB_PASSWORD,
             host=DB_HOST,
             port=DB_PORT,
         )

@@ -5,13 +5,11 @@ fails=0
 iterations=0
 saved_csvs=0
 
-echo -n "Password:"
-read -s PASSWORD
-echo
+./src/prompt_password.py
 
 for receipt in ./data/receipt_pdfs/20??-??-??T??_??_??.pdf
 do
- ./src/repetition_check.py "$receipt" "$PASSWORD"
+ ./src/repetition_check.py "$receipt"
  new_receipt=$?
  if [ $new_receipt -eq 1 ]; then
   echo "Unexpected error."
@@ -29,7 +27,7 @@ do
  if [ $result -eq 0 ]; then
   echo "Successfully read: $receipt. Beginning registration."
   csv="./data/temp${receipt:19:20}.csv"
-  ./src/log_csv.py "$csv" "$PASSWORD"
+  ./src/log_csv.py "$csv"
   log_result=$?
   if [ $log_result -eq 0 ]; then
    echo "Success!"
@@ -60,7 +58,7 @@ for edit in ./data/archive/20??-??-??T??_??_??_edit.csv
 do
  echo
  echo registering "$edit"
- ./src/log_csv.py "$edit" "$PASSWORD"
+ ./src/log_csv.py "$edit"
  result=$?
  if [ $result -eq 0 ]; then
   reg="${edit::34}_reg.csv"

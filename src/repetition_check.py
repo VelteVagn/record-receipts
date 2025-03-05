@@ -9,15 +9,13 @@ def main():
     # get the name
     NAME = sys.argv[1]
 
-    # get password
-    DB_PASSWORD = sys.argv[2]
-
     # get connection variables from .env
     load_dotenv()
     DB_NAME = os.getenv("DB_NAME")
     DB_USER = os.getenv("DB_USER")
     DB_HOST = os.getenv("DB_HOST")
     DB_PORT = os.getenv("DB_PORT")
+    DB_PASSWORD = os.getenv("DB_PASSWORD")
 
     # get time and date
     time = list(NAME[-12:-4])
