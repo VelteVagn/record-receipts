@@ -1,6 +1,5 @@
 *.log # Ignore log files
 commit_guidelines.txt
-data/receipt_pdfs/*
 .DS_Store
 .env
 .dated_stuff
