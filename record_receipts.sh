@@ -14,7 +14,7 @@ do
  if [ $new_receipt -eq 1 ]; then
   echo "Unexpected error."
   exit 1
- elif [ $new_receipt -eq 2 ]; then
+ elif [ $new_receipt -eq 2 ]; then
   continue
  elif [ $new_receipt -eq 3 ]; then
   echo "Error: Unable to connect to psql server. Possibly wrong password. Try again."
