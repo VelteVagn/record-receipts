@@ -1,4 +1,4 @@
-# Receipt Logger
+# Receipt Recorder
 This is a programme with the purpose of reading receipts and logging the results in a psql table. Product purchases will be divided into amount, total price and category. 
 
 ## Table of Contents
@@ -54,17 +54,17 @@ Put the receipts that are to be scanned and logged into the directory data/recei
 $ cp data/sample_receipts/* data/receipt_pdfs/
 ```
 
-Make auto_receipts3.sh executable:
+Make record_receipts.sh executable:
 ```bash
-$ chmod +x auto_receipts3.sh
+$ chmod +x record_receipts.sh
 ```
 
-Execute auto_receipts.sh to begin registering the receipts in data/receipt_pdfs and follow the instructions:
+Execute record_receipts.sh to begin registering the receipts in data/receipt_pdfs and follow the instructions:
 ```bash
-$ ./auto_receipts3.sh
+$ ./record_receipts.sh
 ```
 
-If parts of the receipt was saved, CSVs will be saved in data/archive. Manually edit the file ending in _mod.csv, and rename it by changing _mod.csv to _edit.csv. Next time auto_receipts3.sh is run, the edits will be registered, and the corresponding CSVs and PDF will be deleted.  
+If parts of the receipt was saved, CSVs will be saved in data/archive. Manually edit the file ending in _mod.csv, and rename it by changing _mod.csv to _edit.csv. Next time record_receipts.sh is run, the edits will be registered, and the corresponding CSVs and PDF will be deleted.  
 
 ## License
 This project is licensed under the [GNU General Public License](COPYING).
