@@ -1,9 +1,3 @@
--- create database
-CREATE DATABASE receipts;
-
--- switch to the database
-\c receipts;
-
 -- create table for categories
 CREATE TABLE categories (
     id SERIAL PRIMARY KEY,
