@@ -237,14 +237,16 @@ def main():
     price = receipt_df['Price'].sum()
     amount = receipt_df['Amount'].sum()
     
-    # check for discrepencies in price and amount
-    if read_amount != amount or abs(read_total - price) > 0.1:
-        sys.exit(4)
-
     time = list(time)
     time = ["_" if t == ":" else t for t in time]
-    time = "".join(time)
-    receipt_df.to_csv(f"./data/temp/{date}T{time}.csv", index=False)
+    time = "".join(time) 
+
+    # check for discrepencies in price and amount
+    if read_amount != amount or abs(read_total - (price + pant)) > 0.1:
+        receipt_df.to_csv(f"./data/archive/{date}T{time}_incorrect.csv", index=False)
+        sys.exit(4)
+    else:
+        receipt_df.to_csv(f"./data/temp/{date}T{time}.csv", index=False)
 
 
 if __name__ == "__main__":
