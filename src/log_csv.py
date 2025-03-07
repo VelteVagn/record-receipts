@@ -144,7 +144,7 @@ def unregistered_product(row, conn, indices, df, dt, empty_n=False):
             save_and_exit(df, indices)
         else:
             print("Please enter a valid input.")
-            return unregistered_product(row, indices, conn, df, dt)
+            return unregistered_product(row, conn, indices, df, dt)
 
 
 def main():
@@ -173,13 +173,16 @@ def main():
         sys.exit(3)
 
     # extract time and date from the name
-    time = csv[-12:-4]
+    if csv[-9:] == "_edit.csv":
+        time = csv[-17:-9]
+        date = csv[-28:-18]
+    else:
+        time = csv[-12:-4]
+        date = csv[-23:-13]    
     time = list(time)
     time = [":" if t == "_" else t for t in time]
     time = "".join(time)
-    date = csv[-23:-13]
     date_time = f"{date} {time}"
-    print(f"DATE AND TIME: {date} {time}")
 
     # import csv as dataframe
     df = pd.read_csv(csv)
@@ -229,8 +232,8 @@ def main():
     if df.empty:
         sys.exit(0)
     else:
-        df.to_csv(f"data/archive/{csv[9:-4]}_mod.csv", index=False)
-        registered_df.to_csv(f"data/archive/{csv[9:-4]}_reg.csv", index=False)
+        df.to_csv(f"data/archive/{csv[12:-4]}_mod.csv", index=False)
+        registered_df.to_csv(f"data/archive/{csv[12:-4]}_reg.csv", index=False)
         sys.exit(2)
 
 

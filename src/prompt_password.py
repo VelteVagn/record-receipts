@@ -26,6 +26,8 @@ def main():
         connection.close()
         sys.exit(0)
     except psycopg2.OperationalError:
+        sys.exit(2)
+    '''
         DB_PWD = getpass.getpass("Password: ")
         try:
             connection = psycopg2.connect(
@@ -36,11 +38,11 @@ def main():
                 port=DB_PORT,
             )
             connection.close()
-            os.environ["DB_PASSWORD"] = DB_PWD
+            print(DB_PWD)
             sys.exit(0)
         except psycopg2.OperationalError:
             print("Unable to connect to psql server. Possibly wrong password. Try again.")
             sys.exit(2)
-
+    '''
 if __name__ == "__main__":
     main()
