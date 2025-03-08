@@ -4,7 +4,6 @@ shopt -s nullglob
 
 successes=0
 fails=0
-iterations=0
 saved_csvs=0
 registered_edits=0
 already_processed=0
@@ -73,8 +72,8 @@ do
  elif [ $result -eq 4 ]; then
   echo "Receipt not properly read. CSV saved in archive for editing."
   ((saved_csvs++))
+  ((fails++))
  fi
- ((iterations++))
 done
 
 for edit in ./data/archive/20??-??-??T??_??_??_edit.csv
@@ -102,6 +101,7 @@ do
    rm "$incorrect"
   fi
   ((registered_edits++))
+  ((already_processed--))
  fi
 done
 
@@ -118,6 +118,7 @@ fi
 if [ $already_processed -gt 0 ]; then
  echo "$already_processed PDFs have already been fully, or partially, processed."
 fi
+echo
 
 #clear temporary directory to keep things tidy
 rm -f ./data/temp/*
