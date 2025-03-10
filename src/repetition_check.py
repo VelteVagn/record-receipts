@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 
+"""
+This script is called in the script record_receipts.sh. Its function is to make sure
+the input receipt has not been previously registered in the PSQL table. If a receipt
+has been registered previously, the script will have exit code 2.
+
+Usage:
+    repetition_check.py yyyy-mm-ddThh_mm_ss.pdf
+"""
+
 import os
 import sys
 import psycopg2
@@ -42,7 +51,9 @@ def main():
     # PSQL cursor
     cursor = connection.cursor()
 
+    # check if a purchase with the same timestamp exists:
     cursor.execute(timestamp_existence, (TIMESTAMP,))
+    # exit script accordingly
     if cursor.fetchone()[0]:
         sys.exit(2)
     else:
