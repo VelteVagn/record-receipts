@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
 
 """
-Takes a digital receipt (.pdf), reads it, structures it into a pandas
-dataframe, and finally saves it as a csv in the directory called csv.
+This script is called within record_receipts.sh. It takes digital receipts
+named yyyy-mm-ddThh_mm_ss.pdf, and reads them using pytesseract. It then
+saves the contents of the receipt in a csv format in ./data/temp if
+everything goes as planned. If inconsistencies are found, a csv will be
+saved in ./data/archive instead.
+
+Usage:
+    python3 src/read_receipt.py yyy-mm-ddThh_mm_ss.pdf
 """
 
 import pytesseract
@@ -125,6 +131,11 @@ def main():
                 continue
         # check if line is a product (products are BOLD as opposed to discounts and the like)
         try:
+            '''
+            if the line starts with a number, it's most likely not a product, but it will be
+            equal to itself in all caps, so we avoid this by adding an 'a' before it, so that
+            it's not equal in all caps anymore.
+            '''
             int(x[0][0])  # making sure it's a product
             if not x[:2] == ["4", "CHEESE"]:
                 x[0] = f"a{x[0]}"
