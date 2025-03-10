@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+"""
+Tries to connect to PSQL server with variables from .env without password.
+If it fails, it's assumed password is needed.
+"""
+
 import os
 import sys
 import psycopg2
@@ -27,22 +32,6 @@ def main():
         sys.exit(0)
     except psycopg2.OperationalError:
         sys.exit(2)
-    '''
-        DB_PWD = getpass.getpass("Password: ")
-        try:
-            connection = psycopg2.connect(
-                dbname=DB_NAME,
-                user=DB_USER,
-                password=DB_PWD,
-                host=DB_HOST,
-                port=DB_PORT,
-            )
-            connection.close()
-            print(DB_PWD)
-            sys.exit(0)
-        except psycopg2.OperationalError:
-            print("Unable to connect to psql server. Possibly wrong password. Try again.")
-            sys.exit(2)
-    '''
+
 if __name__ == "__main__":
     main()
