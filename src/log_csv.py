@@ -1,17 +1,24 @@
 #!/usr/bin/env python3
 
+"""
+This script is part of record_receipts.sh. It takes a CSV as an argument
+and then logs its contents into a PSQL table. When new products that are
+not present in the PSQL table "products", the user is prompted to give a
+category the new product fits into. The script opens up for the
+possibility of partially logging CSV which will result in new CSVs being
+saved in ./data/archive. 
+
+Usage:
+    python3 src/log_csv.py yyyy-mm-ddThh_mm_ss.csv
+"""
+
+# imports:
 import os
 import sys
 import psycopg2
 import pandas as pd
 from prompt_toolkit import prompt
 from dotenv import load_dotenv
-
-
-"""
-Takes a csv with 3 columns named 'Product', 'Amount' and 'Price' and logs it into a psql table.
-"""
-
 
 # function to exit the python script whilst saving the dataframe
 def save_and_exit(dataframe, indices):
@@ -23,17 +30,20 @@ def save_and_exit(dataframe, indices):
     sys.exit(2)
 
 
-# IMPROVEMENT: Make one max_length for 1st row and one for 2nd row to make spacing more natural.
 def get_categories(conn, list_cat):
     """
-    If list_cat is false, simply returns a list of all categories. If list_cat is true, all the categories
-    will be printed in 3 separate columns as well.
+    If list_cat is false, simply returns a list of all categories. If 
+    list_cat is true, all the categories will be printed in 3 separate
+    columns as well.
     """
+    # make a list of all categories:
     list_categories = "SELECT category_name FROM categories ORDER BY category_name;"
     with conn.cursor() as cursor:
         cursor.execute(list_categories)
         categories = cursor.fetchall()
     categories = [c[0] for c in categories]
+    
+    # list all the categories in 3 columns:
     if list_cat:
         max_length = max([len(c) for c in categories])
         l = len(categories)
@@ -56,6 +66,12 @@ def get_categories(conn, list_cat):
 
 
 def unregistered_product(row, conn, indices, df, dt, empty_n=False):
+    """
+    Prompts the user what to do when new products that have not occurred before
+    shows up.
+    """
+    
+    # PSQL commands:
     insert_category = "INSERT INTO categories (category_name) VALUES (%s);"
 
     check_product_existence = (
@@ -72,8 +88,9 @@ def unregistered_product(row, conn, indices, df, dt, empty_n=False):
       INSERT INTO purchases
       (date, price, amount, product_id)
       VALUES (%s, %s, %s, %s);
-   """
+    """
 
+    # Prompt cases:
     with conn.cursor() as cursor:
         user_input = input().lower()
         if user_input == "n" or empty_n:
@@ -100,7 +117,6 @@ def unregistered_product(row, conn, indices, df, dt, empty_n=False):
                 return unregistered_product(row, indices, conn, df, dt, empty_n=True)
             category = user_input[2].upper() + user_input[3:]
             categories = get_categories(conn, list_cat=False)
-            # should be made a function (because repetition):
             if not category in categories:
                 cursor.execute(insert_category, (category,))
                 conn.commit()
@@ -115,7 +131,6 @@ def unregistered_product(row, conn, indices, df, dt, empty_n=False):
             )
             conn.commit()
             return True
-            # end of "function".
         elif user_input == "s":
             return False
         elif user_input[0] == "m":
@@ -159,7 +174,6 @@ def main():
     DB_PORT = os.getenv("DB_PORT")
     DB_PASSWORD = os.getenv("DB_PASSWORD")
 
-    # POSSIBLE UPGRADE: ask for password a second time on fail
     # connect to the postgreSQL database
     try:
         connection = psycopg2.connect(
@@ -184,20 +198,13 @@ def main():
     time = "".join(time)
     date_time = f"{date} {time}"
 
-    # import csv as dataframe
+    # import csv as dataframe:
     df = pd.read_csv(csv)
 
-    # PSQL cursor
+    # PSQL cursor:
     cursor = connection.cursor()
 
     # PSQL commands:
-
-    # check_category_existence = 'SELECT EXISTS (SELECT 1 FROM categories WHERE category_name = %s);'
-
-    # find_ids = 'SELECT id, category_id FROM products WHERE product_name = %s;'
-
-    # check_existing_purchases = 'SELECT 1 FROM purchases WHERE date = %s LIMIT 1;'
-
     check_product_existence = (
         "SELECT EXISTS (SELECT 1 FROM products WHERE product_name = %s);"
     )
@@ -209,7 +216,7 @@ def main():
       (date, price, amount, product_id)
       VALUES (%s, %s, %s, %s);
    """
-
+    # loop through all rows in CSV:
     indices = []
     for index, row in df.iterrows():
         cursor.execute(check_product_existence, (row["Product"],))
@@ -227,8 +234,12 @@ def main():
             if unregistered_product(row, connection, indices, df, date_time):
                 indices.append(index)
     registered_df = df.loc[indices]
+
+    # remove all successfully registered rows:
     df.drop(index=indices, inplace=True)
 
+    # if all rows were successfully registered (and thus removed)
+    # exit the script. Otherwise, save partial CSVs first:
     if df.empty:
         sys.exit(0)
     else:
