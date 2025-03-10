@@ -14,3 +14,10 @@ Contains PDFs of grocery receipts. This is where all input receipts should be st
 
 ## temp:
 Contains temporarily stored files. Will be emptied automatically when running the script.
+
+## sample_receipts:
+Contains examples of receipts. Copy the contents over to ./receipt_pdfs to test the script:
+```bash
+$ cd data
+$ cp sample_receipts/* receipt_pdfs
+```
