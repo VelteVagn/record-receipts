@@ -14,6 +14,7 @@ import sys
 import psycopg2
 from dotenv import load_dotenv
 
+
 def main():
     # get the name
     NAME = sys.argv[1]
@@ -28,13 +29,13 @@ def main():
 
     # get time and date
     time = list(NAME[-12:-4])
-    time = [':' if t == '_' else t for t in time]
-    time = ''.join(time)
+    time = [":" if t == "_" else t for t in time]
+    time = "".join(time)
     date = NAME[-23:-13]
-    TIMESTAMP = f'{date} {time}'
+    TIMESTAMP = f"{date} {time}"
 
     # check if any registered purchase has the same timestamp
-    timestamp_existence = "SELECT EXISTS (SELECT 1 FROM purchases WHERE date = %s);"    
+    timestamp_existence = "SELECT EXISTS (SELECT 1 FROM purchases WHERE date = %s);"
 
     # connect to psql database
     try:
@@ -58,6 +59,7 @@ def main():
         sys.exit(2)
     else:
         sys.exit(0)
+
 
 if __name__ == "__main__":
     main()

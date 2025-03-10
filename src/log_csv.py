@@ -20,6 +20,7 @@ import pandas as pd
 from prompt_toolkit import prompt
 from dotenv import load_dotenv
 
+
 # function to exit the python script whilst saving the dataframe
 def save_and_exit(dataframe, indices):
     registered_df = df.loc[indices]
@@ -32,7 +33,7 @@ def save_and_exit(dataframe, indices):
 
 def get_categories(conn, list_cat):
     """
-    If list_cat is false, simply returns a list of all categories. If 
+    If list_cat is false, simply returns a list of all categories. If
     list_cat is true, all the categories will be printed in 3 separate
     columns as well.
     """
@@ -42,7 +43,7 @@ def get_categories(conn, list_cat):
         cursor.execute(list_categories)
         categories = cursor.fetchall()
     categories = [c[0] for c in categories]
-    
+
     # list all the categories in 3 columns:
     if list_cat:
         max_length = max([len(c) for c in categories])
@@ -70,7 +71,7 @@ def unregistered_product(row, conn, indices, df, dt, empty_n=False):
     Prompts the user what to do when new products that have not occurred before
     shows up.
     """
-    
+
     # PSQL commands:
     insert_category = "INSERT INTO categories (category_name) VALUES (%s);"
 
@@ -192,7 +193,7 @@ def main():
         date = csv[-28:-18]
     else:
         time = csv[-12:-4]
-        date = csv[-23:-13]    
+        date = csv[-23:-13]
     time = list(time)
     time = [":" if t == "_" else t for t in time]
     time = "".join(time)

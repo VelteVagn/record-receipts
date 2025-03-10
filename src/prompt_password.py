@@ -11,6 +11,7 @@ import psycopg2
 from dotenv import load_dotenv
 import getpass
 
+
 def main():
 
     # get connection variables from .env
@@ -19,7 +20,7 @@ def main():
     DB_USER = os.getenv("DB_USER")
     DB_HOST = os.getenv("DB_HOST")
     DB_PORT = os.getenv("DB_PORT")
-    
+
     # check if password is needed
     try:
         connection = psycopg2.connect(
@@ -32,6 +33,7 @@ def main():
         sys.exit(0)
     except psycopg2.OperationalError:
         sys.exit(2)
+
 
 if __name__ == "__main__":
     main()
