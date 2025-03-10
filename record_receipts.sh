@@ -1,4 +1,10 @@
 #!/bin/bash
+                                                                       |
+# This script reads through all receipts in ./data/receipt_pdfs and then
+# logs all the purchases into a PSQL table. 
+
+# Usage:
+#     ./record_receipts.sh
 
 # avoid reading empty loops as single string:
 shopt -s nullglob
