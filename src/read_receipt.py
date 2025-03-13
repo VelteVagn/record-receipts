@@ -90,6 +90,8 @@ def main():
     for x in groc_word_list:
         if x == "FRYSVAROR BYTES EJ":
             continue
+        if "Självscanning" in x:
+            continue
         # correct cases of "xx. xx" to "xx.xx":
         try:
             if x[-2][-1] == ".":
