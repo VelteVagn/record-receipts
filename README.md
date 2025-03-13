@@ -19,7 +19,7 @@ $ cd reciept
 Create and activate Conda environment:
 ```bash
 $ conda env create -f environment.yml
-$ conda activate base
+$ conda activate receipt_env
 ```
 
 Change name of .env.example to .env:
